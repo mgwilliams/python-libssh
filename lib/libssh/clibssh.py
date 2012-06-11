@@ -98,7 +98,7 @@ def ssh_is_server_known(session): pass
 @libssh(argtypes=[c_void_p])
 def ssh_disconnect(session): pass
 
-@libssh(argtypes=[c_void_p, c_int, c_char_p])
+@libssh(argtypes=[c_void_p, c_char_p, c_char_p])
 def ssh_userauth_password(session, username, password): pass
 
 @libssh(argtypes=[c_void_p, c_char_p])
@@ -126,7 +126,7 @@ def ssh_channel_request_exec(channel, command): pass
 def ssh_channel_poll(channel, is_stderr): pass
 
 @libssh(argtypes=[c_void_p, c_char_p, c_int, c_int])
-def ssh_channel_read(channel, buffer, buffer_length, is_stderr): pass
+def ssh_channel_read(channel, buffer, bufferlen, is_stderr): pass
 
 @libssh(argtypes=[c_void_p])
 def ssh_channel_send_eof(channel): pass
@@ -171,6 +171,9 @@ def sftp_new(session): pass
 def sftp_init(sftp_session): pass
 
 @libssh(argtypes=[c_void_p])
+def sftp_close(sftp_session): pass
+
+@libssh(argtypes=[c_void_p])
 def sftp_free(sftp_session): pass
 
 @libssh(argtypes=[c_void_p])
@@ -185,6 +188,6 @@ def sftp_open(sftp_session, filename, access_type, mode): pass
 @libssh(argtypes=[c_void_p, c_char_p, c_int])
 def sftp_write(file_handle, data, datalen): pass
 
-@libssh(argtypes=[c_void_p, c_char_p, c_int], restype=c_char_p)
+@libssh(argtypes=[c_void_p, c_char_p, c_int])
 def sftp_read(file_handle, buffer, bufferlen): pass
 
