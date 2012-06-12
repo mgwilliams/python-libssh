@@ -158,7 +158,7 @@ class SshChannel(SshObject):
             sudo_marker = ''.join(chr(random.randint(ord('a'), ord('z'))) for x in xrange(32))
         else:
             sudo_marker = self.session.sudo_marker
-        prompt = '[sudo via ansible, key=%s] password: ' % sudo_marker
+        prompt = '[sudo via libssh, key=%s] password: ' % sudo_marker
         sudocmd = 'sudo -k && sudo -p "%s" -u %s -- "$SHELL" -c %s; echo %s\n' % (
             prompt, user, pipes.quote(command), sudo_marker)
         self.session.sudo_marker = sudo_marker
