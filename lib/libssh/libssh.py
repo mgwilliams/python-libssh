@@ -84,31 +84,30 @@ class SshSession(SshObject):
         print "%s: %s" % (msg, err)
 
     def put_file(self, remote_path, data, mode):
+        remote_path = str(remote_path)
         path, filename = os.path.split(remote_path)
-        channel = SshChannel(self)
-        channel.execute_command("mkdir -p %s" % path)
-        channel.close()
- 
-        scp = clibssh.ssh_scp_new(self.session, clibssh.SSH_SCP_WRITE | clibssh.SSH_SCP_RECURSIVE, '.')
+
+        scp = clibssh.ssh_scp_new(self.session, (clibssh.SSH_SCP_WRITE), path)
+        if clibssh.ssh_scp_init(scp) != clibssh.SSH_OK:
+            self.print_error("Cannot open scp session")
+        clibssh.ssh_scp_close(scp)
+        clibssh.ssh_scp_free(scp)
+
+        scp = clibssh.ssh_scp_new(self.session, (clibssh.SSH_SCP_WRITE), path)
         if clibssh.ssh_scp_init(scp) != clibssh.SSH_OK:
             self.print_error("Cannot open scp session")
             return
-
-        print "entering dir: ", path
-
-        rc = clibssh.ssh_scp_push_directory(scp, path, mode)
-        if rc != clibssh.SSH_OK:
-            self.print_error("Could not enter directory")
         rc = clibssh.ssh_scp_push_file(scp, filename, len(data), mode)
         if rc != clibssh.SSH_OK:
             self.print_error("Cannot open remote file for writing")
             return
-
-        rc = clibssh.ssh_scp_write(scp, data, len(data))
-        if rc != clibssh.SSH_OK:
-            self.print_error("Cannot write to remote file")
+        if len(data):
+            rc = clibssh.ssh_scp_write(scp, data, len(data))
+            if rc != clibssh.SSH_OK:
+                self.print_error("Cannot write to remote file")
         clibssh.ssh_scp_close(scp)
         clibssh.ssh_scp_free(scp)
+        print "done"
         return clibssh.SSH_OK
 
 class SshChannel(SshObject):
@@ -176,8 +175,6 @@ class SshChannel(SshObject):
                 time.sleep(0.01)
             password = password + '\n'
             clibssh.ssh_channel_write(self.channel, password, len(bytes(password)))
-            print "password written"
-        #clibssh.ssh_channel_send_eof(self.channel)
         self.sudo=True
 
     def close(self):

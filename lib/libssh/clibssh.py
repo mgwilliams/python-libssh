@@ -134,6 +134,9 @@ def ssh_channel_send_eof(channel): pass
 @libssh(argtypes=[c_void_p])
 def ssh_channel_request_pty(channel): pass
 
+@libssh(argtypes=[c_void_p, c_char_p, c_int])
+def ssh_channel_write(channel, data, datalen): pass
+
 @libssh(argtypes=[c_void_p])
 def ssh_channel_request_shell(channel): pass
 
@@ -148,6 +151,9 @@ def ssh_scp_new(session): pass
 
 @libssh(argtypes=[c_void_p])
 def ssh_scp_init(scp_session): pass
+
+@libssh(argtypes=[c_void_p])
+def ssh_scp_leave_directory(scp_session): pass
 
 @libssh(argtypes=[c_void_p, c_char_p, c_int])
 def ssh_scp_push_directory(scp_ession, path, mode): pass
